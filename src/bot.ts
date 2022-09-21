@@ -1,4 +1,5 @@
 import { Client, GatewayIntentBits, REST, Routes, TextChannel } from 'discord.js';
+const { EmbedBuilder } = require('discord.js');
 import 'dotenv/config';
 
 const client = new Client({
@@ -10,12 +11,12 @@ const client = new Client({
 });
 
 const gifs = [
-	'https://tenor.com/view/forrest-gump-hello-wave-hi-waving-gif-22571528',
-	'https://tenor.com/view/hello-bob-minions-the-rise-of-gru-hi-greetings-gif-26087717',
-	'https://tenor.com/view/hey-fr-stuart-long-mark-wahlberg-father-stu-hello-gif-25066833',
-	'https://tenor.com/view/whats-up-wazzup-scary-movie-scream-gif-16474707',
-	'https://tenor.com/view/starwars-greetings-alec-guinness-obi-wan-hello-gif-4813375',
-	'https://tenor.com/view/napoleon-dynamite-wave-bye-gif-15387504',
+	'https://c.tenor.com/Dhrbmr_t3tEAAAAd/forrest-gump-hello.gif',
+	'https://c.tenor.com/pqqlX7Ha8PcAAAAC/hello-bob.gif',
+	'https://c.tenor.com/y6aIM8CBK2cAAAAd/hey-fr-stuart-long.gif',
+	'https://c.tenor.com/nVSmF0rmEOsAAAAd/whats-up-wazzup.gif',
+	'https://c.tenor.com/1lscxdaCK4IAAAAC/starwars-greetings.gif',
+	'https://c.tenor.com/95ycw_CgVHoAAAAC/napoleon-dynamite-wave.gif',
 ];
 
 client.on('ready', () => {
@@ -23,9 +24,18 @@ client.on('ready', () => {
 });
 
 client.on('guildMemberAdd', async (member) => {
-	member.roles.add(['1021977112405610647']);
-	const channel = client.channels.cache.get('1016153877566984276');
-	(channel as TextChannel).send(gifs[Math.floor(Math.random() * (gifs.length + 1))]);
+	member.roles.add(['849359794451251240']);
+	const channel = client.channels.cache.get('810216198397624384');
+
+	(channel as TextChannel).send({
+		embeds: [
+			new EmbedBuilder()
+				.setColor(0x0099ff)
+				.setTitle('Welcome to Hack-A-Project')
+				.setURL('https://hack-a-project.org')
+				.setImage(gifs[Math.floor(Math.random() * (gifs.length + 1))]),
+		],
+	});
 });
 
 client.login(process.env.DISCORD_TOKEN);
