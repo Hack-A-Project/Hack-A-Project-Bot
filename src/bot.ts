@@ -76,7 +76,7 @@ client.on('guildMemberAdd', async (member) => {
 			embeds: [
 				new EmbedBuilder()
 					.setColor(0x0099ff)
-					.setTitle('Welcome to Hack-A-Project')
+					.setTitle(`Welcome to Hack-A-Project ${member.nickname} 👋`)
 					.setURL('https://hack-a-project.org')
 					.setImage(gifs[Math.floor(Math.random() * (gifs.length + 1))]),
 			],
