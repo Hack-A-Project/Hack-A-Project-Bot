@@ -26,7 +26,7 @@ const gifs = [
 
 client.on('ready', () => {
 	console.log(`Logged in as ${client.user?.tag}!`);
-	var channel = client.channels.cache.get(`${process.env.GENERAL_CHANNEL}`);
+	var channel = client.channels.cache.get(`${process.env.GENERAL_CHANNEL_TEST}`);
 
 	const sendMessage = async () => {
 		const { data } = await get('https://news.ycombinator.com/');
@@ -34,9 +34,6 @@ client.on('ready', () => {
 
 		const max_points = {
 			link: '',
-			title: '',
-			image: '',
-			description: '',
 			points: -1,
 		};
 
@@ -63,14 +60,14 @@ client.on('ready', () => {
 			if (now.getUTCHours() - 5 == 17 && now.getUTCMinutes() == 0) {
 				await sendMessage();
 			}
-		}, 60 * 1000);
+		}, 10 * 1000);
 	})();
 });
 
 client.on('guildMemberAdd', async (member) => {
 	setTimeout(() => {
-		member.roles.add([`${process.env.MEMBER_ROLE}`]);
-		const channel = client.channels.cache.get(`${process.env.GENERAL_CHANNEL}`);
+		member.roles.add([`${process.env.MEMBER_ROLE_TEST}`]);
+		const channel = client.channels.cache.get(`${process.env.GENERAL_CHANNEL_TEST}`);
 
 		(channel as TextChannel).send({
 			embeds: [
