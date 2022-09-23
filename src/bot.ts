@@ -26,7 +26,7 @@ const gifs = [
 
 client.on('ready', () => {
 	console.log(`Logged in as ${client.user?.tag}!`);
-	var channel = client.channels.cache.get(`${process.env.GENERAL_CHANNEL}`);
+	var channel = client.channels.cache.get(`${process.env.NEWS_CHANNEL}`);
 
 	const sendMessage = async () => {
 		const { data } = await get('https://news.ycombinator.com/');
