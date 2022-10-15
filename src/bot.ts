@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, REST, Routes, TextChannel } from 'discord.js';
+import { Client, GatewayIntentBits, REST, Routes, TextChannel, DiscordAPIError } from 'discord.js';
 import { parsePoints } from '../utils/functions';
 const { EmbedBuilder } = require('discord.js');
 import axios from 'axios';
@@ -15,6 +15,9 @@ const client = new Client({
 	],
 });
 
+const SECOND = 1000;
+const MINUTE = 60 * SECOND;
+
 const gifs = [
 	'https://c.tenor.com/Dhrbmr_t3tEAAAAd/forrest-gump-hello.gif',
 	'https://c.tenor.com/pqqlX7Ha8PcAAAAC/hello-bob.gif',
@@ -28,7 +31,7 @@ client.on('ready', () => {
 	console.log(`Logged in as ${client.user?.tag}!`);
 	var channel = client.channels.cache.get(`${process.env.NEWS_CHANNEL}`);
 
-	const sendMessage = async () => {
+	const sendNews = async () => {
 		const { data } = await get('https://news.ycombinator.com/');
 		const $ = load(data);
 
@@ -42,28 +45,41 @@ client.on('ready', () => {
 
 		$('table.itemlist tbody tr').each((i, el) => {
 			if (i % 3 == 1) {
-				const points = parsePoints($(el).children('td.subtext').children('span.score').text());
+				const points = parsePoints(
+					$(el).children('td.subtext').children('span.subline').children('span.score').text()
+				);
 				if (points > max_points.points) {
-					const link = $(el.prev!).children('td.title').children('a.titlelink').attr('href');
+					const link = $(el.prev!)
+						.children('td:eq(2)')
+						.children('span.titleline')
+						.children('a')
+						.attr('href');
+
 					max_points.link = link!;
 					max_points.points = points;
 				}
 			}
 		});
 
+		if (max_points.link === '') max_points.link = 'ERROR';
 		(channel as TextChannel).send(max_points.link);
 	};
 
+	async function callback() {
+		const now = new Date();
+		if (now.getUTCHours() - 4 == 6 && now.getUTCMinutes() == 0) {
+			await sendNews();
+		}
+		if (now.getUTCHours() - 4 == 13 && now.getUTCMinutes() == 0) {
+			await sendNews();
+		}
+		if (now.getUTCHours() - 4 == 20 && now.getUTCMinutes() == 0) {
+			await sendNews();
+		}
+	}
+
 	(() => {
-		setTimeout(async () => {
-			const now = new Date();
-			if (now.getUTCHours() - 5 == 8 && now.getUTCMinutes() == 0) {
-				await sendMessage();
-			}
-			if (now.getUTCHours() - 5 == 17 && now.getUTCMinutes() == 0) {
-				await sendMessage();
-			}
-		}, 60 * 1000);
+		setInterval(callback, MINUTE);
 	})();
 });
 
