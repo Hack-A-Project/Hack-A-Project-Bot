@@ -27,6 +27,8 @@ const gifs = [
 	'https://c.tenor.com/95ycw_CgVHoAAAAC/napoleon-dynamite-wave.gif',
 ];
 
+let postedNews: string[] = [];
+
 client.on('ready', () => {
 	console.log(`Logged in as ${client.user?.tag}!`);
 	var channel = client.channels.cache.get(`${process.env.NEWS_CHANNEL}`);
@@ -48,25 +50,28 @@ client.on('ready', () => {
 				const points = parsePoints(
 					$(el).children('td.subtext').children('span.subline').children('span.score').text()
 				);
-				if (points > max_points.points) {
-					const link = $(el.prev!)
-						.children('td:eq(2)')
-						.children('span.titleline')
-						.children('a')
-						.attr('href');
-
+				const link = $(el.prev!)
+					.children('td:eq(2)')
+					.children('span.titleline')
+					.children('a')
+					.attr('href');
+				if (points > max_points.points && !postedNews.includes(link!)) {
+					postedNews.push(link!);
 					max_points.link = link!;
 					max_points.points = points;
 				}
 			}
 		});
 
-		if (max_points.link === '') max_points.link = 'ERROR';
+		if (max_points.link === '') max_points.link = 'NO NEW NEWS || ERROR';
 		(channel as TextChannel).send(max_points.link);
 	};
 
 	async function callback() {
 		const now = new Date();
+		if (now.getUTCHours() - 4 == 0 && now.getUTCMinutes() == 0) {
+			postedNews = [];
+		}
 		if (now.getUTCHours() - 4 == 6 && now.getUTCMinutes() == 0) {
 			await sendNews();
 		}
