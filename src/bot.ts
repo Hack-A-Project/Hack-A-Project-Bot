@@ -46,7 +46,7 @@ client.on('ready', () => {
 			points: -1,
 		};
 
-		$('table.itemlist tbody tr').each((i, el) => {
+		$('table#hnmain tbody tr:eq(3) table tbody tr').each((i, el) => {
 			if (i % 3 == 1) {
 				const points = parsePoints(
 					$(el).children('td.subtext').children('span.subline').children('span.score').text()
@@ -77,7 +77,7 @@ client.on('ready', () => {
 		if (now.getUTCHours() - 4 == 13 && now.getUTCMinutes() == 0) {
 			await sendNews();
 		}
-		if (now.getUTCHours() - 4 == 20 && now.getUTCMinutes() == 0) {
+		if (now.getUTCHours() - 4 == 19 && now.getUTCMinutes() == 0) {
 			await sendNews();
 		}
 	}
@@ -102,7 +102,7 @@ client.on('guildMemberAdd', async (member) => {
 					.setImage(gifs[gifIndex]),
 			],
 		});
-	}, 3000);
+	}, 30 * SECOND);
 });
 
 client.login(process.env.DISCORD_TOKEN);

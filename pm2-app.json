@@ -1,0 +1,9 @@
+{
+  "apps": [
+    {
+      "name": "hack-a-project-bot",
+      "script": "./src/bot.ts",
+      "instances": 1
+    }
+  ]
+}
