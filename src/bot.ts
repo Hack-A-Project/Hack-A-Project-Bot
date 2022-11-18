@@ -1,3 +1,5 @@
+import * as fs from 'node:fs';
+import log4js from 'log4js';
 import { Client, GatewayIntentBits, REST, Routes, TextChannel, DiscordAPIError } from 'discord.js';
 import { parsePoints } from '../utils/functions';
 const { EmbedBuilder } = require('discord.js');
@@ -14,6 +16,9 @@ const client = new Client({
 		GatewayIntentBits.GuildMembers,
 	],
 });
+
+const logger = log4js.getLogger();
+logger.level = 'debug';
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -46,7 +51,7 @@ client.on('ready', () => {
 			points: -1,
 		};
 
-		$('table#hnmain tbody tr:eq(3) table tbody tr').each((i, el) => {
+		$('table#hnmain tbody tr:eq(4) table tbody tr').each((i, el) => {
 			if (i % 3 == 1) {
 				const points = parsePoints(
 					$(el).children('td.subtext').children('span.subline').children('span.score').text()
@@ -64,7 +69,35 @@ client.on('ready', () => {
 			}
 		});
 
-		if (max_points.link === '') max_points.link = 'NO NEW NEWS || ERROR';
+		if (max_points.link === '') {
+			$('table#hnmain tbody tr:eq(3) table tbody tr').each((i, el) => {
+				if (i % 3 == 1) {
+					const points = parsePoints(
+						$(el).children('td.subtext').children('span.subline').children('span.score').text()
+					);
+					const link = $(el.prev!)
+						.children('td:eq(2)')
+						.children('span.titleline')
+						.children('a')
+						.attr('href');
+					if (points > max_points.points && !postedNews.includes(link!)) {
+						postedNews.push(link!);
+						max_points.link = link!;
+						max_points.points = points;
+					}
+				}
+			});
+		}
+
+		if (max_points.link === '') {
+			max_points.link = 'NO NEW NEWS';
+			fs.writeFile('./test/test.html', data, (err: any) => {
+				if (err) {
+					logger.debug('Could not write to file.');
+				}
+			});
+			logger.debug(`error has happened.`);
+		}
 		(channel as TextChannel).send(max_points.link);
 	};
 
